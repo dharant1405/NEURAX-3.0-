@@ -1,4 +1,4 @@
-# InspectIQ — From Pixel to Profit
+# InspectIQ
  
 **A defect-to-profit decision-support system for multi-stage manufacturing**
  
