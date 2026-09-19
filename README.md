@@ -186,3 +186,13 @@ inspectiq/
 - **Human in the loop:** uncertain and novel cases are routed to review.
 - **Honest limits:** root-cause results are hypotheses, and flow and profit figures are simulation-based estimates.
  
+---
+ 
+## 10. References
+
+1. "A Comprehensive Review of Convolutional Neural Networks for Defect Detection in Industrial Applications," *IEEE Access*, 2024.
+2. "An Interrogative Survey of Explainable AI in Manufacturing," *IEEE Transactions on Industrial Informatics*, 2024.
+3. "Unsupervised Image Anomaly Detection and Localization in Industry…," *IEEE Transactions on Instrumentation and Measurement*, 2023.
+4. "Advancing Manufacturing Through Artificial Intelligence…," *IEEE Access*, 2024.
+5. "Vision-Based Measurement for Quality Control Inspection Integrated Into a Die-Casting Process in Industry 4.0 Era," *IEEE Access*, 2025.
+ 
