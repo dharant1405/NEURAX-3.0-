@@ -1,0 +1,48 @@
+# economics.yaml — Economics Engine configuration
+# IMPORTANT: These are FALLBACK assumptions only.
+# When actual data is available, data values take precedence.
+# All fallback values are displayed to the user as ASSUMPTIONS.
+
+version: "1.0"
+
+fallback_values:
+  # Whether to use fallback values when cost fields are missing
+  enabled: true
+  # All values below are overridden by dataset fields when present
+  selling_price: 500.0          # per unit
+  material_cost: 150.0          # per unit
+  processing_cost: 80.0         # per unit
+  energy_cost: 15.0             # per unit
+  labor_cost: 40.0              # per unit
+  rework_cost: 60.0             # per rejected unit (if reworkable)
+  scrap_cost: 200.0             # per scrapped unit (material + disposal)
+  inspection_cost: 5.0          # per unit inspected
+  downtime_cost_per_hour: 800.0 # per hour of station downtime
+
+decision_costs:
+  # Costs used for threshold optimization (FR-12)
+  # false_accept_cost: cost when a defective unit passes inspection
+  # false_reject_cost: cost when a good unit is rejected
+  # review_cost: cost of manual human review
+  false_accept_cost: 250.0      # warranty + downstream scrap
+  false_reject_cost: 120.0      # lost good unit
+  review_cost: 20.0             # labor for manual inspection
+
+margin_model:
+  # Model for margin forecasting
+  model: "gradient_boosting"    # gradient_boosting, linear, monte_carlo
+  quantile_alpha: 0.10          # for 80% prediction interval (10th-90th percentiles)
+  n_estimators: 100
+  random_state: 42
+
+throughput_accounting:
+  # Value each bottleneck hour lost to the whole system
+  enabled: true
+  # If null, calculated as (margin per unit * bottleneck capacity)
+  bottleneck_hour_value: null
+
+display:
+  # Currency symbol for dashboard display
+  currency: "₹"
+  # Decimal places for cost/margin display
+  decimal_places: 2

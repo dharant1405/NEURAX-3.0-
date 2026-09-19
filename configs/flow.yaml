@@ -1,0 +1,59 @@
+# flow.yaml — Flow Engine configuration
+
+version: "1.0"
+
+bottleneck:
+  # Primary method: active_period, utilization, hybrid
+  primary_method: "hybrid"
+  # Active Period Method settings
+  active_period:
+    # Minimum continuous active duration to count (seconds)
+    min_active_duration_sec: 10
+    # Smoothing window for bottleneck timeline (seconds)
+    smoothing_window_sec: 300
+  # Complementary indicators weighting
+  weights:
+    utilization: 0.35
+    wip_buildup: 0.25
+    blocked_starved_time: 0.20
+    cycle_time_imbalance: 0.20
+
+simulation:
+  # SimPy discrete-event simulation settings
+  engine: "simpy"
+  # Simulation duration when not constrained by data
+  default_duration_hours: 8.0
+  # Random seed for reproducibility
+  random_seed: 42
+  # Number of simulation replications (for confidence intervals)
+  replications: 5
+  # Warm-up period to reach steady state (hours)
+  warmup_hours: 0.5
+  # Buffer capacity between stations (units)
+  # If null, estimated from historical WIP data
+  default_buffer_size: null
+  # Rework loop: which station defective units return to
+  # If null, determined from data (defect_location → upstream station)
+  rework_returns_to: null
+
+calibration:
+  # Calibrate simulation to match historical throughput within tolerance
+  enabled: true
+  target_metric: "throughput"       # throughput, wip, utilization
+  tolerance_pct: 5.0               # acceptable deviation %
+
+sensitivity:
+  # What-if sensitivity experiments
+  cycle_time_steps: [0.90, 0.95, 1.0, 1.05, 1.10]   # multipliers
+  downtime_steps: [0.5, 0.75, 1.0, 1.25, 1.5]
+  n_top_stations: 3   # rank top N stations by improvement potential
+
+losses:
+  # Loss categories to track and display
+  categories:
+    - scrap
+    - rework
+    - downtime
+    - changeover
+    - starvation
+    - blocking

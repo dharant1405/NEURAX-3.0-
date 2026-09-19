@@ -1,0 +1,152 @@
+# schema_mapping.yaml
+# Maps external dataset column names -> internal InspectIQ schema fields.
+# Edit this file to adapt a new dataset without changing any application code.
+# Supported formats: csv, parquet, json
+
+version: "1.0"
+
+# ─────────────────────────────────────────────
+# Inspection / Product table
+# ─────────────────────────────────────────────
+inspection:
+  file_pattern: "inspection*.csv"
+  # internal_field: external_column_name
+  unit_id: "product_id"
+  image_reference: null           # set to column name if images referenced in CSV
+  variant_id: "product_variant"
+  batch_id: "batch_id"
+  timestamp: "inspection_timestamp"
+  inspection_result: "inspection_result"
+  defect_family: "defect_family"
+  anomaly_score: "anomaly_score"
+  confidence: "inspection_confidence"
+  # Optional fields (null = not present in this dataset)
+  defect_severity: "defect_severity"
+  defect_location: "defect_location"
+  is_novel: "is_novel_defect"
+
+# ─────────────────────────────────────────────
+# Products / Production units table
+# ─────────────────────────────────────────────
+products:
+  file_pattern: "products*.csv"
+  unit_id: "product_id"
+  variant_id: "product_variant"
+  batch_id: "batch_id"
+  station_id: "station_id"
+  timestamp: "production_timestamp"
+  shift: "shift"
+  operator_id: "operator_id"
+
+# ─────────────────────────────────────────────
+# Process parameters table
+# ─────────────────────────────────────────────
+process_parameters:
+  file_pattern: "process_parameters*.csv"
+  unit_id: "product_id"
+  batch_id: "batch_id"
+  station_id: "station_id"
+  timestamp: null    # if no timestamp col, events are matched by unit_id
+  parameters:
+    temperature: "temperature"
+    pressure: "pressure"
+    machine_speed: "machine_speed"
+    vibration: "vibration"
+    humidity: "humidity"
+    cycle_time_sec: "cycle_time_sec"
+    tool_wear_percent: "tool_wear_percent"
+    energy_consumption_kwh: "energy_consumption_kwh"
+
+# ─────────────────────────────────────────────
+# Production aggregate table (station-batch level)
+# ─────────────────────────────────────────────
+production:
+  file_pattern: "production*.csv"
+  batch_id: "batch_id"
+  station_id: "station_id"
+  planned_units: "planned_units"
+  produced_units: "produced_units"
+  good_units: "good_units"
+  defective_units: "defective_units"
+  rework_units: "rework_units"
+  scrap_units: "scrap_units"
+  downtime_minutes: "downtime_minutes"
+  utilization_pct: "utilization_percent"
+  capacity_per_hour: "capacity_units_per_hour"
+  throughput_per_hour: "actual_throughput_units_per_hour"
+
+# ─────────────────────────────────────────────
+# Downtime events table
+# ─────────────────────────────────────────────
+downtime:
+  file_pattern: "downtime*.csv"
+  downtime_id: "downtime_id"
+  batch_id: "batch_id"
+  station_id: "station_id"
+  start_time: "start_time"
+  duration_minutes: "duration_minutes"
+  reason: "downtime_reason"
+  severity: "severity"
+
+# ─────────────────────────────────────────────
+# Economics table
+# ─────────────────────────────────────────────
+economics:
+  file_pattern: "economics*.csv"
+  unit_id: "product_id"
+  batch_id: "batch_id"
+  variant_id: "product_variant"
+  selling_price: "selling_price"
+  material_cost: "material_cost"
+  processing_cost: "processing_cost"
+  energy_cost: "energy_cost"
+  labor_cost: "labor_cost"
+  rework_cost: "rework_cost"
+  scrap_cost: "scrap_cost"
+  total_cost: "total_cost"
+  profit: "profit"
+  profit_margin_pct: "profit_margin_percent"
+
+# ─────────────────────────────────────────────
+# Stations reference table
+# ─────────────────────────────────────────────
+stations:
+  file_pattern: "stations*.csv"
+  station_id: "station_id"
+  station_name: "station_name"
+  process_type: "process_type"
+  nominal_cycle_time: "nominal_cycle_time_sec"
+  max_capacity_per_hour: "maximum_capacity_per_hour"
+  normal_temp_min: "normal_temperature_min"
+  normal_temp_max: "normal_temperature_max"
+  normal_pressure_min: "normal_pressure_min"
+  normal_pressure_max: "normal_pressure_max"
+
+# ─────────────────────────────────────────────
+# Batches reference table
+# ─────────────────────────────────────────────
+batches:
+  file_pattern: "batches*.csv"
+  batch_id: "batch_id"
+  variant_id: "product_variant"
+  start_time: "start_time"
+  end_time: "end_time"
+  planned_quantity: "planned_quantity"
+  actual_quantity: "actual_quantity"
+  defect_rate_pct: "defect_rate_percent"
+  rework_rate_pct: "rework_rate_percent"
+  scrap_rate_pct: "scrap_rate_percent"
+  process_drift_score: "process_drift_score"
+
+# ─────────────────────────────────────────────
+# Defect catalog (optional reference)
+# ─────────────────────────────────────────────
+defect_catalog:
+  file_pattern: "defect_catalog*.csv"
+  defect_type: "defect_type"
+  defect_family: "defect_family"
+  typical_station: "typical_station"
+  possible_causes: "possible_causes"
+  severity: "severity"
+  resolution: "scrap_or_rework"
+  typical_cost: "typical_cost"

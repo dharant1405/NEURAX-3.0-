@@ -1,0 +1,52 @@
+# uncertainty.yaml — Uncertainty & Decision Policy configuration
+
+version: "1.0"
+
+conformal:
+  # Target coverage level: prediction set contains true class with >= (1-alpha) probability
+  alpha: 0.10   # 90% coverage
+  # Score function: "softmax", "aps" (Adaptive Prediction Sets), "raps"
+  score_function: "aps"
+  # Minimum calibration samples required before conformal is active
+  min_calibration_samples: 30
+
+novelty:
+  # Embedding distance threshold: if distance to nearest known family > this, flag NOVEL
+  # If null, estimated automatically from calibration set (95th percentile of intra-class distances)
+  threshold: null
+  distance_metric: "cosine"     # cosine, euclidean
+  # Minimum known defect examples required before novelty detection is active
+  min_known_examples: 5
+
+decision_states:
+  # These are the ONLY four possible states. Do not add more here.
+  accept: "ACCEPT"
+  reject: "REJECT"
+  review: "REVIEW"
+  novel: "NOVEL"
+
+  # Rules (all thresholds loaded from this config or calibrated from data)
+  # score < low_anomaly_threshold AND prediction_set = {normal} → ACCEPT
+  # score > high_anomaly_threshold AND |prediction_set| = 1 AND NOT novel → REJECT
+  # (score near threshold) OR |prediction_set| > 1 → REVIEW
+  # score > high_anomaly_threshold AND is_novel → NOVEL
+
+  # If null, these are set by the Economics Engine via threshold_optimizer
+  low_anomaly_threshold: null
+  high_anomaly_threshold: null
+
+  # Fallback thresholds (used if Economics Engine hasn't run yet)
+  fallback_low_threshold: 0.3
+  fallback_high_threshold: 0.7
+
+drift_monitoring:
+  # Monitor score distribution for calibration staleness
+  enabled: true
+  # KS test p-value below this triggers a staleness warning
+  ks_warning_threshold: 0.05
+  # Rolling window size (number of recent units) for drift monitoring
+  window_size: 200
+
+review_queue:
+  # Maximum queue size before dashboard shows overload warning
+  max_queue_size: 100

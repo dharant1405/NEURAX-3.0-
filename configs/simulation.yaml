@@ -1,0 +1,67 @@
+# simulation.yaml — What-If Scenario Engine configuration
+
+version: "1.0"
+
+scenario:
+  # All scenario outputs are labelled SIMULATED / ADVISORY
+  advisory_label: "SIMULATED / ADVISORY"
+  # Maximum number of saved scenarios per session
+  max_saved_scenarios: 10
+  # Default baseline: use historical data averages
+  baseline: "historical_mean"
+
+parameters:
+  # Parameter ranges for scenario sliders (relative to baseline)
+  defect_rate:
+    min_multiplier: 0.1
+    max_multiplier: 3.0
+    default_multiplier: 1.0
+    step: 0.05
+
+  cycle_time:
+    min_multiplier: 0.5
+    max_multiplier: 2.0
+    default_multiplier: 1.0
+    step: 0.05
+
+  downtime:
+    min_multiplier: 0.0
+    max_multiplier: 3.0
+    default_multiplier: 1.0
+    step: 0.1
+
+  changeover_duration:
+    min_multiplier: 0.5
+    max_multiplier: 2.0
+    default_multiplier: 1.0
+    step: 0.1
+
+  rework_rate:
+    min_multiplier: 0.0
+    max_multiplier: 2.0
+    default_multiplier: 1.0
+    step: 0.05
+
+  inspection_threshold:
+    min: 0.1
+    max: 0.9
+    default: 0.5
+    step: 0.05
+
+output:
+  # Metrics to compute and display for each scenario
+  metrics:
+    - throughput
+    - defect_rate
+    - scrap_units
+    - rework_units
+    - wip
+    - margin_per_unit
+    - total_margin
+    - false_accept_rate
+    - false_reject_rate
+    - review_rate
+  # Whether to show delta vs baseline or absolute values
+  show_delta: true
+  # Confidence interval level for simulation outputs
+  confidence_level: 0.80

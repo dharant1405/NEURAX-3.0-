@@ -1,0 +1,74 @@
+# dashboard.yaml — Streamlit Dashboard configuration
+
+version: "1.0"
+
+app:
+  title: "InspectIQ — Defect-to-Profit Decision Support"
+  page_icon: "🔬"
+  layout: "wide"
+  # Auto-refresh interval in seconds (0 = disabled, only manual refresh)
+  auto_refresh_seconds: 0
+
+pages:
+  - id: "data_upload"
+    title: "📁 Data Upload"
+    icon: "📁"
+    order: 0
+  - id: "quality"
+    title: "🔍 Quality"
+    icon: "🔍"
+    order: 1
+  - id: "root_cause"
+    title: "🔎 Root Cause"
+    icon: "🔎"
+    order: 2
+  - id: "flow"
+    title: "⚙️ Flow"
+    icon: "⚙️"
+    order: 3
+  - id: "profit_whatif"
+    title: "💰 Profit & What-If"
+    icon: "💰"
+    order: 4
+
+charts:
+  # Plotly theme: plotly_dark, plotly, ggplot2, seaborn
+  theme: "plotly_dark"
+  color_palette:
+    accept: "#00C853"
+    reject: "#D50000"
+    review: "#FF6D00"
+    novel: "#AA00FF"
+    bottleneck: "#FF1744"
+    normal: "#00BCD4"
+  height:
+    small: 300
+    medium: 450
+    large: 600
+  animation_duration_ms: 500
+
+filters:
+  # Global filter sidebar settings
+  show_date_filter: true
+  show_variant_filter: true
+  show_batch_filter: true
+  show_station_filter: true
+  show_defect_family_filter: true
+  show_shift_filter: true
+  # Maximum options to show in multiselect before collapsing
+  max_visible_options: 20
+
+evidence_panel:
+  # Evidence panel: max images to show per unit
+  max_heatmap_resolution: [400, 400]
+  show_nearest_normal: true
+  show_anomaly_score: true
+  show_prediction_set: true
+  show_root_cause_link: true
+  show_economic_impact: true
+
+assumptions_display:
+  # Always show assumption badges on estimated/fallback values
+  show_assumption_badge: true
+  assumption_badge_color: "#FFA000"
+  assumption_tooltip: "This value is estimated from configured fallback assumptions, not from the dataset."

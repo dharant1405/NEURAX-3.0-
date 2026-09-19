@@ -1,0 +1,75 @@
+# vision.yaml — Vision Engine configuration
+# All parameters loaded at runtime. No hardcoded values in source code.
+
+version: "1.0"
+
+model:
+  # Options: "isolation_forest" (lightweight, no GPU needed)
+  #          "patchcore"        (requires Anomalib + PyTorch)
+  #          "efficientad"      (requires Anomalib + PyTorch)
+  backend: "isolation_forest"
+
+  # Isolation Forest settings (used when backend = isolation_forest)
+  isolation_forest:
+    n_estimators: 200
+    contamination: "auto"   # auto-estimated from data
+    random_state: 42
+
+  # PatchCore / EfficientAD settings (used when backend in [patchcore, efficientad])
+  anomalib:
+    model_name: "patchcore"
+    backbone: "wide_resnet50_2"
+    coreset_sampling_ratio: 0.1
+    num_neighbors: 9
+
+image:
+  size: [224, 224]          # [height, width] — resized before feature extraction
+  normalize: true
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  augmentation:
+    enabled: true
+    brightness_range: [0.8, 1.2]
+    contrast_range: [0.8, 1.2]
+    rotation_degrees: 10
+    horizontal_flip: true
+
+features:
+  # Feature extraction for lightweight backend
+  hog:
+    enabled: true
+    orientations: 9
+    pixels_per_cell: [16, 16]
+    cells_per_block: [2, 2]
+  color_histogram:
+    enabled: true
+    bins: 32
+    color_space: "HSV"   # HSV, RGB, LAB
+
+localization:
+  # Threshold for anomaly map → binary mask
+  # If null, computed automatically via Otsu's method
+  mask_threshold: null
+  min_region_area: 100     # pixels, smaller connected components discarded
+  heatmap_blur_sigma: 3.0
+
+defect_classification:
+  # When labels are present
+  supervised:
+    enabled: true
+    model: "logistic_regression"   # logistic_regression, svm, mlp
+    max_iter: 1000
+    random_state: 42
+  # When labels are absent — cluster anomalous embeddings
+  clustering:
+    enabled: true
+    algorithm: "hdbscan"     # hdbscan, kmeans
+    min_cluster_size: 5
+    max_clusters: 20
+
+training:
+  # Fraction of normal images to use for reference memory bank
+  memory_bank_ratio: 1.0   # 1.0 = use all normal training images
+  random_state: 42
+  # Calibration set split (held out for conformal calibration)
+  calibration_ratio: 0.2

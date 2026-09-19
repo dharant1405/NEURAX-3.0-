@@ -1,0 +1,56 @@
+# rootcause.yaml — Root-Cause Engine configuration
+
+version: "1.0"
+
+aggregation:
+  # Time window for aggregating defect rates (minutes)
+  time_window_minutes: 60
+  # Minimum units in a batch/station cell to run statistical tests
+  min_cell_count: 10
+
+drift_detection:
+  # Change-point detection algorithm: pelt, binseg, cusum
+  algorithm: "pelt"
+  # Cost function for PELT: rbf, l2, l1, normal
+  cost_function: "rbf"
+  # Penalty for PELT (higher = fewer change-points)
+  # If null, estimated via BIC
+  penalty: null
+  min_segment_length: 5
+
+association_tests:
+  # Statistical significance threshold (before FDR correction)
+  alpha: 0.05
+  # FDR correction method: benjamini_hochberg, bonferroni
+  fdr_method: "benjamini_hochberg"
+  # Categorical association test: chi2, fisher
+  categorical_test: "chi2"
+  # Continuous-to-binary association: point_biserial, mutual_info
+  continuous_test: "mutual_info"
+  # Minimum effect size to report (Cohen's h or correlation)
+  min_effect_size: 0.1
+
+shap_analysis:
+  # Gradient boosted model for SHAP
+  model: "lightgbm"   # lightgbm, random_forest, gradient_boosting
+  n_estimators: 100
+  max_depth: 4
+  learning_rate: 0.05
+  random_state: 42
+  # Number of top SHAP features to include in hypothesis
+  top_features: 5
+
+hypothesis:
+  # Minimum adjusted p-value for a factor to appear in hypothesis
+  min_significance: 0.10
+  # Must defect rise AFTER drift to count as a candidate cause
+  require_temporal_precedence: true
+  # Maximum number of hypotheses to return per defect family
+  max_hypotheses: 5
+  # Minimum confidence to show hypothesis (0-1 scale)
+  min_confidence: 0.2
+
+synthetic_validation:
+  # Used for evaluation only: inject known faults into synthetic data
+  enabled: false
+  injection_seed: 42
