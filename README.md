@@ -37,8 +37,6 @@ Quality (defect & rework rates) → Flow (throughput, bottleneck) → Profit (ma
  
 ## 3. System Architecture
  
-![InspectIQ architecture](docs/architecture.svg)
- 
 | # | Module | What it does |
 |---|---|---|
 | 1 | **Ingestion & Schema Adapter** | Validates organizer data, maps columns to one internal schema, replays it as a simulated live stream |
@@ -49,6 +47,62 @@ Quality (defect & rework rates) → Flow (throughput, bottleneck) → Profit (ma
 | 6 | **Economics Engine** | Computes unit economics and margin forecast; sets cost-optimal thresholds |
 | 7 | **Recommendation Engine** | Runs simulated what-if scenarios and ranks advisory actions by margin impact |
 | 8 | **Dashboard & API** | Four views: Quality, Root-Cause, Flow, Profit & What-If; each alert carries an evidence card |
+
+### Module pipeline
+
+```
+Dataset Upload
+    ↓
+configs/schema_mapping.yaml      ← maps external column names
+    ↓
+src/ingestion/schema_adapter.py  ← renames columns
+    ↓
+src/ingestion/validator.py       ← validates quality
+    ↓
+src/ingestion/data_loader.py     ← loads all tables
+    ↓
+        ┌──────────────────┬──────────────────┐
+        ↓                  ↓                  ↓
+src/vision/           src/rootcause/      src/flow/
+vision_engine.py      rootcause_engine.py flow_engine.py
+        ↓                  ↓                  ↓
+src/uncertainty/      Hypotheses          Bottleneck +
+decision_engine.py                        Simulation
+        ↓                  ↓                  ↓
+        └──────────────────┴──────────────────┘
+                           ↓
+              src/economics/economics_engine.py
+                           ↓
+            src/recommend/recommendation_engine.py
+                           ↓
+              src/engine_runner.py  (orchestrator)
+                           ↓
+              dashboard/app.py  (Streamlit UI)
+```
+
+### Decision states
+
+Every inspected unit gets one of four states, assigned by `src/uncertainty/decision_engine.py` from thresholds calibrated by the Economics Engine (minimizing expected cost):
+
+- `ACCEPT` — anomaly score ≤ low_threshold, no defect
+- `REJECT` — anomaly score ≥ high_threshold, known defect
+- `REVIEW` — score in ambiguous zone, or multiple possible defect classes
+- `NOVEL` — anomaly detected but outside known defect families
+
+### Configuration files
+
+| File | Purpose |
+|------|---------|
+| `configs/schema_mapping.yaml` | Maps external columns → internal schema |
+| `configs/vision.yaml` | Vision engine model and feature parameters |
+| `configs/uncertainty.yaml` | Conformal alpha, novelty threshold, decision states |
+| `configs/rootcause.yaml` | Statistical test parameters, SHAP settings |
+| `configs/flow.yaml` | Bottleneck detection, SimPy simulation settings |
+| `configs/economics.yaml` | Fallback cost assumptions (labelled as ASSUMPTIONS) |
+| `configs/simulation.yaml` | What-if scenario parameter ranges |
+| `configs/dashboard.yaml` | UI layout, colors, chart settings |
+
+See [`docs/architecture.md`](docs/architecture.md) for the full design notes, including the no-hardcoded-business-logic principle and per-unit data flow.
  
 ---
  

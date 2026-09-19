@@ -259,5 +259,5 @@ def render():
                 "to InspectIQ's internal schema. Edit `configs/schema_mapping.yaml` to adapt."
             )
             mapping_path = _ROOT / "configs" / "schema_mapping.yaml"
-            with open(mapping_path) as fh:
+            with open(mapping_path, encoding="utf-8") as fh:
                 st.code(fh.read(), language="yaml")

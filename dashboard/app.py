@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 # Page config (must be first Streamlit call)
 # ─────────────────────────────────────────────────────────────────────────────
 dash_cfg_path = _ROOT / "configs" / "dashboard.yaml"
-with open(dash_cfg_path) as fh:
+with open(dash_cfg_path, encoding="utf-8") as fh:
     DASH_CFG = yaml.safe_load(fh)
 
 st.set_page_config(

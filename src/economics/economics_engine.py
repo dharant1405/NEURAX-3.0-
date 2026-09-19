@@ -30,7 +30,7 @@ class EconomicsEngine:
 
     def __init__(self, config_path: Optional[str | Path] = None):
         path = Path(config_path) if config_path else _DEFAULT_CFG
-        with open(path, "r") as fh:
+        with open(path, "r", encoding="utf-8") as fh:
             self._cfg = yaml.safe_load(fh)
 
         self._fallback = self._cfg.get("fallback_values", {})
